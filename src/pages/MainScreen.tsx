@@ -88,7 +88,7 @@ export function MainScreen() {
 
       {/* ── DESKTOP: 3 колонки на всю ширину ── */}
       {isDesktop && <div
-        style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, padding: '32px 10% 96px', alignItems: 'start' }}
+        style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, padding: '32px 0 96px', alignItems: 'start' }}
       >
         {/* ── ЛЕВАЯ: Проекты ── */}
         <div>
