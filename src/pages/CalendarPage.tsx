@@ -379,56 +379,80 @@ export function CalendarPage() {
 
       {/* Calendar grid */}
       <div className="px-4 mb-4">
-        <div className="rounded-2xl p-4" style={{ backgroundColor: '#252236' }}>
-          <div className="flex items-center justify-between mb-4">
+        <div className="rounded-2xl p-3" style={{ backgroundColor: '#252236' }}>
+          <div className="flex items-center justify-between mb-3">
             <button onClick={prevMonth} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.06)', color: '#F0EEFF' }}>‹</button>
             <span className="font-semibold text-sm" style={{ color: '#F0EEFF' }}>{MONTHS_RU[month]} {year}</span>
             <button onClick={nextMonth} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.06)', color: '#F0EEFF' }}>›</button>
           </div>
 
-          <div className="grid grid-cols-7 mb-2">
-            {DAYS_RU.map(d => <div key={d} className="text-center text-xs" style={{ color: '#9B98B8' }}>{d}</div>)}
+          <div className="grid grid-cols-7 mb-1 gap-1">
+            {DAYS_RU.map(d => (
+              <div key={d} className="text-center text-xs py-1 font-medium" style={{ color: '#9B98B866' }}>{d}</div>
+            ))}
           </div>
 
-          <div className="grid grid-cols-7 gap-y-1">
+          <div className="grid grid-cols-7 gap-1">
             {days.map((d, i) => {
               if (!d) return <div key={`e${i}`} />
               const ds = toDateStr(d)
               const isToday    = ds === todayStr
               const isSelected = ds === selected
               const hasWork    = workDates.has(ds)
-              const hasSlot    = slotDates.has(ds)
               const hasSession = sessionDates.has(ds)
-              const hasFree    = freeDates.has(ds) && !hasWork
               const hasEvent   = eventDates.has(ds)
 
+              const freeMin = (calendar.freeWindows ?? [])
+                .filter(fw => fw.date === ds)
+                .reduce((sum, fw) => sum + fw.freeMinutes, 0)
+              const freeH = freeMin > 0 ? Math.round(freeMin / 60) : 0
+
+              let bg = 'transparent'
+              let dateColor = '#F0EEFF'
+              if (isSelected) { bg = '#7C3AED'; dateColor = '#fff' }
+              else if (isToday) { bg = '#7C3AED33'; dateColor = '#C4B5FD' }
+              else if (hasWork) { bg = '#EF444415'; }
+
               return (
-                <div key={ds} className="flex flex-col items-center gap-0.5">
-                  <button
-                    onClick={() => setSelected(ds)}
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all active:scale-90"
-                    style={{
-                      backgroundColor: isSelected ? '#7C3AED' : isToday ? '#7C3AED22' : 'transparent',
-                      color: isSelected ? '#fff' : isToday ? '#7C3AED' : '#F0EEFF',
-                    }}
-                  >
+                <button
+                  key={ds}
+                  onClick={() => setSelected(ds)}
+                  className="flex flex-col items-center justify-between rounded-xl py-1.5 px-0.5 transition-all active:scale-95"
+                  style={{
+                    backgroundColor: bg,
+                    border: isToday && !isSelected ? '1px solid #7C3AED66' : '1px solid transparent',
+                    minHeight: 52,
+                  }}
+                >
+                  <span className="text-sm font-semibold leading-none" style={{ color: dateColor }}>
                     {d.getDate()}
-                  </button>
-                  <div className="flex gap-0.5">
-                    {hasWork    && <div className="w-1 h-1 rounded-full" style={{ backgroundColor: '#EF4444' }} />}
-                    {hasSlot    && <div className="w-1 h-1 rounded-full" style={{ backgroundColor: '#3B82F6' }} />}
-                    {hasSession && <div className="w-1 h-1 rounded-full" style={{ backgroundColor: '#10B981' }} />}
-                    {hasFree    && <div className="w-1 h-1 rounded-full" style={{ backgroundColor: '#7C3AED' }} />}
-                    {hasEvent   && <div className="w-1 h-1 rounded-full" style={{ backgroundColor: '#F97316' }} />}
-                  </div>
-                </div>
+                  </span>
+                  {freeH > 0 ? (
+                    <span
+                      className="text-xs font-bold leading-none mt-1"
+                      style={{ color: isSelected ? '#C4B5FD' : '#7C3AED' }}
+                    >
+                      {freeH}ч
+                    </span>
+                  ) : hasWork ? (
+                    <span className="text-xs leading-none mt-1" style={{ color: '#EF444488' }}>—</span>
+                  ) : (
+                    <span className="mt-1" style={{ height: 14 }} />
+                  )}
+                  {(hasSession || hasEvent) && (
+                    <div className="flex gap-0.5 mt-0.5">
+                      {hasSession && <div className="w-1 h-1 rounded-full" style={{ backgroundColor: isSelected ? '#fff' : '#10B981' }} />}
+                      {hasEvent   && <div className="w-1 h-1 rounded-full" style={{ backgroundColor: isSelected ? '#fff' : '#F97316' }} />}
+                    </div>
+                  )}
+                </button>
               )
             })}
           </div>
 
           {/* Legend */}
           <div className="flex gap-3 mt-3 pt-3 flex-wrap" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-            {[['#EF4444','Работа'],['#7C3AED','Свободно'],['#10B981','Сессии'],['#F97316','События']].map(([c,l]) => (
+            {[['#EF4444','Работа'],['#7C3AED','Свободно (ч)'],['#10B981','Сессии'],['#F97316','События']].map(([c,l]) => (
               <div key={l} className="flex items-center gap-1">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: c }} />
                 <span className="text-xs" style={{ color: '#9B98B8' }}>{l}</span>
