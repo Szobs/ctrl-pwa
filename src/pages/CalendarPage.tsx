@@ -224,8 +224,8 @@ function StatsCard({ calendar }: { calendar: Calendar }) {
   const totalWeekFree  = weekFreeMin  + weekUserFree
 
   return (
-    <div className="px-4 mb-4">
-      <div className="rounded-2xl p-4" style={{ backgroundColor: '#252236' }}>
+    <div className="px-2 mb-4">
+      <div className="rounded-2xl p-3" style={{ backgroundColor: '#252236' }}>
         <p className="text-xs font-semibold mb-3" style={{ color: '#9B98B8' }}>Бюджет времени</p>
 
         {/* Week */}
@@ -404,7 +404,7 @@ export function CalendarPage() {
   return (
     <div className="flex flex-col min-h-svh pb-24" style={{ backgroundColor: '#1E1B2E' }}>
       {/* Header */}
-      <div className="px-4 pt-12 pb-4 flex items-center justify-between">
+      <div className="px-2 pt-12 pb-4 flex items-center justify-between">
         <h1 className="text-xl font-bold" style={{ color: '#F0EEFF' }}>Календарь</h1>
         <button
           onClick={() => setImporting(i => !i)}
@@ -417,8 +417,8 @@ export function CalendarPage() {
 
       {/* Import */}
       {importing && (
-        <div className="px-4 mb-3">
-          <div className="rounded-2xl p-4" style={{ backgroundColor: '#252236', border: '1px solid #7C3AED44' }}>
+        <div className="px-2 mb-3">
+          <div className="rounded-2xl p-3" style={{ backgroundColor: '#252236', border: '1px solid #7C3AED44' }}>
             <p className="text-sm font-semibold mb-1" style={{ color: '#F0EEFF' }}>График март 2026 — Andrii P.</p>
             <p className="text-xs mb-3" style={{ color: '#9B98B8' }}>
               15 смен + расчёт свободного времени по каждому дню
@@ -439,7 +439,7 @@ export function CalendarPage() {
       <StatsCard calendar={calendar} />
 
       {/* Calendar grid */}
-      <div className="px-4 mb-4">
+      <div className="px-2 mb-4">
         <div className="rounded-2xl p-3" style={{ backgroundColor: '#252236' }}>
           <div className="flex items-center justify-between mb-3">
             <button onClick={prevMonth} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.06)', color: '#F0EEFF' }}>‹</button>
@@ -524,7 +524,7 @@ export function CalendarPage() {
       </div>
 
       {/* Selected day */}
-      <div className="px-4">
+      <div className="px-2">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold" style={{ color: '#F0EEFF' }}>
             {new Date(sel + 'T12:00:00').toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' })}

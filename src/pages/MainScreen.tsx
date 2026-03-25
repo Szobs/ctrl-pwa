@@ -67,7 +67,7 @@ export function MainScreen() {
   return (
     <div className="flex flex-col min-h-svh pb-24" style={{ backgroundColor: '#1E1B2E' }}>
       {/* Header */}
-      <div className="px-4 pt-12 pb-3">
+      <div className="px-2 pt-12 pb-3">
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-2xl font-bold tracking-tight" style={{ color: '#F0EEFF' }}>CTRL</h1>
@@ -104,8 +104,8 @@ export function MainScreen() {
       </div>
 
       {/* Weekly stats */}
-      <div className="px-4 mb-4">
-        <div className="rounded-2xl p-4" style={{ backgroundColor: '#252236' }}>
+      <div className="px-2 mb-4">
+        <div className="rounded-2xl p-3" style={{ backgroundColor: '#252236' }}>
           <div className="flex justify-between items-center mb-3">
             <span className="text-sm font-semibold" style={{ color: '#F0EEFF' }}>Эта неделя</span>
             <span className="text-sm font-bold" style={{ color: '#10B981' }}>{weeklyHours}ч</span>
@@ -116,8 +116,8 @@ export function MainScreen() {
 
       {/* Time budget across all projects */}
       {totalEstimatedMin > 0 && (
-        <div className="px-4 mb-4">
-          <div className="rounded-2xl p-4" style={{ backgroundColor: '#252236' }}>
+        <div className="px-2 mb-4">
+          <div className="rounded-2xl p-3" style={{ backgroundColor: '#252236' }}>
             <p className="text-xs font-semibold mb-3" style={{ color: '#9B98B8' }}>Оценка времени · все проекты</p>
             <div className="grid grid-cols-3 gap-2 mb-3">
               <div className="rounded-xl p-2.5 text-center" style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}>
@@ -158,7 +158,7 @@ export function MainScreen() {
 
 
       {/* Projects */}
-      <div className="px-4">
+      <div className="px-2">
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-base font-semibold" style={{ color: '#F0EEFF' }}>Проекты</h2>
           <button
@@ -183,7 +183,7 @@ export function MainScreen() {
       </div>
 
       {/* Reset */}
-      <div className="px-4 mt-8 mb-2">
+      <div className="px-2 mt-8 mb-2">
         {!confirmReset ? (
           <button
             onClick={() => setConfirmReset(true)}
@@ -193,7 +193,7 @@ export function MainScreen() {
             Сбросить все данные
           </button>
         ) : (
-          <div className="rounded-2xl p-4" style={{ backgroundColor: '#EF444411', border: '1px solid #EF444433' }}>
+          <div className="rounded-2xl p-3" style={{ backgroundColor: '#EF444411', border: '1px solid #EF444433' }}>
             <p className="text-sm font-semibold mb-1 text-center" style={{ color: '#EF4444' }}>Удалить всё?</p>
             <p className="text-xs text-center mb-3" style={{ color: '#9B98B8' }}>Проекты, сессии и прогресс будут удалены из GitHub</p>
             <div className="flex gap-2">

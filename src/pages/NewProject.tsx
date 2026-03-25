@@ -176,7 +176,7 @@ export function NewProject() {
           </div>
 
           {useTemplate && (
-            <div className="px-4 py-3" style={{ backgroundColor: '#252236' }}>
+            <div className="px-2 py-3" style={{ backgroundColor: '#252236' }}>
               {/* Phases */}
               <div className="flex gap-1.5 flex-wrap mb-3">
                 {template.phases.map((ph, i) => (

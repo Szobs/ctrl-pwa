@@ -26,7 +26,7 @@ export function ProjectCard({ project }: Props) {
   return (
     <button
       onClick={() => navigate(`/project/${project.id}`)}
-      className="w-full text-left rounded-2xl p-4 transition-all duration-200 active:scale-98"
+      className="w-full text-left rounded-2xl p-3 transition-all duration-200 active:scale-98"
       style={{
         backgroundColor: '#252236',
         border: `1px solid ${project.color}22`,

@@ -30,7 +30,7 @@ export function HistoryPage() {
   return (
     <div className="flex flex-col min-h-svh pb-24" style={{ backgroundColor: '#1E1B2E' }}>
       {/* Header */}
-      <div className="px-4 pt-12 pb-4">
+      <div className="px-2 pt-12 pb-4">
         <h1 className="text-xl font-bold" style={{ color: '#F0EEFF' }}>История</h1>
         <p className="text-sm mt-0.5" style={{ color: '#9B98B8' }}>
           {sessions.length} сессий · {totalHours}ч всего
@@ -38,15 +38,15 @@ export function HistoryPage() {
       </div>
 
       {/* Activity graph */}
-      <div className="px-4 mb-4">
-        <div className="rounded-2xl p-4" style={{ backgroundColor: '#252236' }}>
+      <div className="px-2 mb-4">
+        <div className="rounded-2xl p-3" style={{ backgroundColor: '#252236' }}>
           <p className="text-xs font-semibold mb-3" style={{ color: '#9B98B8' }}>Активность за 13 недель</p>
           <ActivityGraph sessions={sessions} weeks={13} />
         </div>
       </div>
 
       {/* Sessions list */}
-      <div className="px-4">
+      <div className="px-2">
         {sessions.length === 0 ? (
           <div className="rounded-2xl p-8 text-center" style={{ backgroundColor: '#252236' }}>
             <p className="text-3xl mb-2">📭</p>

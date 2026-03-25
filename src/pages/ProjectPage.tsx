@@ -466,7 +466,7 @@ export function ProjectPage() {
   return (
     <div className="min-h-svh pb-28" style={{ backgroundColor: '#1E1B2E' }}>
       {/* Header */}
-      <div className="px-4 pt-12 pb-6" style={{ background: `linear-gradient(180deg, ${project.color}22 0%, transparent 100%)` }}>
+      <div className="px-2 pt-12 pb-6" style={{ background: `linear-gradient(180deg, ${project.color}22 0%, transparent 100%)` }}>
         <div className="flex items-center justify-between mb-4">
           <button onClick={() => navigate('/')} className="flex items-center gap-1 text-sm" style={{ color: '#9B98B8' }}>
             ← Назад
@@ -623,7 +623,7 @@ export function ProjectPage() {
       </div>
 
       {/* Tabs */}
-      <div className="px-4 mb-4">
+      <div className="px-2 mb-4">
         <div className="flex gap-1 p-1 rounded-xl" style={{ backgroundColor: '#252236' }}>
           {(['tasks', 'journal', 'board', 'history'] as Tab[]).map(t => (
             <button
@@ -640,7 +640,7 @@ export function ProjectPage() {
 
       {/* Tasks tab */}
       {tab === 'tasks' && (
-        <div className="px-4">
+        <div className="px-2">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-base font-semibold" style={{ color: '#F0EEFF' }}>Цели и задачи</h2>
             <div className="flex items-center gap-2">
@@ -690,7 +690,7 @@ export function ProjectPage() {
 
       {/* Board tab */}
       {tab === 'board' && (
-        <div className="px-4">
+        <div className="px-2">
           <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: '#252236', height: 'calc(100svh - 320px)' }}>
             <div className="flex items-center justify-end px-3 pt-2">
               <button
@@ -710,9 +710,9 @@ export function ProjectPage() {
 
       {/* Journal tab */}
       {tab === 'journal' && (
-        <div className="px-4">
+        <div className="px-2">
           {/* New entry */}
-          <div className="rounded-2xl p-4 mb-4" style={{ backgroundColor: '#252236' }}>
+          <div className="rounded-2xl p-3 mb-4" style={{ backgroundColor: '#252236' }}>
             <textarea
               value={journalText}
               onChange={e => setJournalText(e.target.value)}
@@ -756,7 +756,7 @@ export function ProjectPage() {
                   const dateStr = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
                   const timeStr = d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
                   return (
-                    <div key={entry.id} className="rounded-2xl p-4" style={{ backgroundColor: '#252236', border: `1px solid ${project.color}18` }}>
+                    <div key={entry.id} className="rounded-2xl p-3" style={{ backgroundColor: '#252236', border: `1px solid ${project.color}18` }}>
                       <div className="flex items-center justify-between mb-2">
                         <div>
                           <span className="text-xs font-semibold" style={{ color: project.color }}>{dateStr}</span>
@@ -782,8 +782,8 @@ export function ProjectPage() {
 
       {/* History tab */}
       {tab === 'history' && (
-        <div className="px-4">
-          <div className="rounded-2xl p-4 mb-4" style={{ backgroundColor: '#252236' }}>
+        <div className="px-2">
+          <div className="rounded-2xl p-3 mb-4" style={{ backgroundColor: '#252236' }}>
             <p className="text-xs font-semibold mb-3" style={{ color: '#9B98B8' }}>Активность</p>
             <ActivityGraph sessions={sessions} projectId={project.id} weeks={13} />
           </div>

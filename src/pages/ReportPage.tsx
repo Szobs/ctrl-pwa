@@ -195,14 +195,14 @@ export function ReportPage() {
   return (
     <div className="flex flex-col min-h-svh pb-24" style={{ backgroundColor: '#1E1B2E' }}>
       {/* Header */}
-      <div className="px-4 pt-12 pb-4">
+      <div className="px-2 pt-12 pb-4">
         <h1 className="text-xl font-bold" style={{ color: '#F0EEFF' }}>Еженедельный отчёт</h1>
         <p className="text-sm mt-0.5" style={{ color: '#9B98B8' }}>{monLabel} — {sunLabel}</p>
       </div>
 
       {/* Main stats */}
-      <div className="px-4 mb-4">
-        <div className="rounded-2xl p-4" style={{ backgroundColor: '#252236' }}>
+      <div className="px-2 mb-4">
+        <div className="rounded-2xl p-3" style={{ backgroundColor: '#252236' }}>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-3xl font-black" style={{ color: '#F0EEFF' }}>{activeDays}<span className="text-lg font-semibold" style={{ color: '#9B98B8' }}>/7</span></p>
@@ -237,8 +237,8 @@ export function ReportPage() {
       </div>
 
       {/* Бюджет времени */}
-      <div className="px-4 mb-4">
-        <div className="rounded-2xl p-4" style={{ backgroundColor: '#252236' }}>
+      <div className="px-2 mb-4">
+        <div className="rounded-2xl p-3" style={{ backgroundColor: '#252236' }}>
           <p className="text-xs font-semibold mb-3" style={{ color: '#9B98B8' }}>Бюджет времени (эта неделя)</p>
           <div className="space-y-2 mb-3">
             <BudgetRow label="Работа" minutes={workMinutesThisWeek} color="#EF4444" total={totalWeekMinutes} />
@@ -259,8 +259,8 @@ export function ReportPage() {
 
       {/* By project */}
       {projectStats.length > 0 && (
-        <div className="px-4 mb-4">
-          <div className="rounded-2xl p-4" style={{ backgroundColor: '#252236' }}>
+        <div className="px-2 mb-4">
+          <div className="rounded-2xl p-3" style={{ backgroundColor: '#252236' }}>
             <p className="text-xs font-semibold mb-3" style={{ color: '#9B98B8' }}>Часы по проектам</p>
             {projectStats.map(({ project, minutes }) => {
               const pct = Math.round((minutes / totalMinutes) * 100)
@@ -290,8 +290,8 @@ export function ReportPage() {
 
       {/* Time estimates per project */}
       {projects.length > 0 && (
-        <div className="px-4 mb-4">
-          <div className="rounded-2xl p-4" style={{ backgroundColor: '#252236' }}>
+        <div className="px-2 mb-4">
+          <div className="rounded-2xl p-3" style={{ backgroundColor: '#252236' }}>
             <p className="text-xs font-semibold mb-3" style={{ color: '#9B98B8' }}>Оценка времени по проектам</p>
             {projects.map(p => {
               const tasks = p.goals.flatMap(g => g.tasks)
@@ -337,8 +337,8 @@ export function ReportPage() {
 
       {/* Forecast */}
       {daysToFinish !== null && pendingTasksMinutes > 0 && (
-        <div className="px-4 mb-4">
-          <div className="rounded-2xl p-4" style={{ backgroundColor: '#252236' }}>
+        <div className="px-2 mb-4">
+          <div className="rounded-2xl p-3" style={{ backgroundColor: '#252236' }}>
             <p className="text-xs font-semibold mb-2" style={{ color: '#9B98B8' }}>Прогноз</p>
             <p className="text-sm" style={{ color: '#F0EEFF' }}>
               При текущем темпе все задачи будут готовы через{' '}
@@ -352,11 +352,11 @@ export function ReportPage() {
       )}
 
       {/* AI Insights */}
-      <div className="px-4 mb-4">
+      <div className="px-2 mb-4">
         <p className="text-xs font-semibold mb-2" style={{ color: '#9B98B8' }}>Анализ</p>
         <div className="flex flex-col gap-2">
           {insights.map((ins, i) => (
-            <div key={i} className="rounded-2xl p-4" style={{ backgroundColor: `${ins.color}12`, border: `1px solid ${ins.color}30` }}>
+            <div key={i} className="rounded-2xl p-3" style={{ backgroundColor: `${ins.color}12`, border: `1px solid ${ins.color}30` }}>
               <p className="text-sm font-semibold mb-1" style={{ color: ins.color }}>{ins.title}</p>
               <p className="text-sm" style={{ color: '#F0EEFF' }}>{ins.text}</p>
             </div>
