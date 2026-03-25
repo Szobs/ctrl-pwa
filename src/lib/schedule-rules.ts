@@ -6,7 +6,9 @@ import type { CalendarEvent, WorkShift } from '../types'
  * 1. После ночной смены (21:30–06:00) → в 16:30 к девушке
  *    Если следующий день суббота — ночевать (нет конечного времени ПК)
  *
- * 2. Суббота с ранней сменой (05:45–14:15) → к девушке в 15:30, ночевать
+ * 2. После ранней смены (05:45–14:15) → к девушке в 16:30 (в тот же день)
+ *    Если это суббота — ночевать (15:30, без PC)
+ *    Если это пятница — ночевать
  *
  * 3. Пятница ночная + суббота сон до 13 → к девушке в 16:30, ночевать
  *    (покрывается правилом 1 + признаком субботы)
@@ -25,8 +27,8 @@ export const SCHEDULE_RULES_DESCRIPTION = {
       overnight: 'Если следующий день суббота — ночевать (без PC-времени)',
     },
     {
-      id: 'saturday-morning-shift',
-      description: 'Суббота с ранней сменой (старт < 12:00) — к девушке в 15:30, ночевать',
+      id: 'after-morning-shift',
+      description: 'После ранней смены (старт < 12:00) — к девушке в 16:30 в тот же день. Суббота — 15:30, ночевать.',
     },
     {
       id: 'sunday',
@@ -97,18 +99,19 @@ export function applyScheduleRules(workSchedule: WorkShift[]): CalendarEvent[] {
     })
   }
 
-  // Правило 2: суббота + ранняя смена
+  // Правило 2: после ранней смены — к девушке в 16:30 (суббота — 15:30 и ночевать)
   for (const shift of workSchedule) {
     if (!isMorningShift(shift)) continue
-    if (dayOfWeek(shift.date) !== 6) continue // только суббота
-    if (usedDates.has(shift.date)) continue   // уже покрыта правилом 1
+    if (usedDates.has(shift.date)) continue // уже покрыта другим правилом
+    const dow = dayOfWeek(shift.date)
+    const isSat = dow === 6
     usedDates.add(shift.date)
     events.push({
-      id: `gf-sat-morning-${shift.date}`,
+      id: `gf-morning-${shift.date}`,
       date: shift.date,
-      startTime: '15:30',
+      startTime: isSat ? '15:30' : '16:30',
       endTime: '23:59',
-      label: '💕 У девушки (ночевать)',
+      label: isSat ? '💕 У девушки (ночевать)' : '💕 У девушки',
       type: 'personal',
     })
   }
