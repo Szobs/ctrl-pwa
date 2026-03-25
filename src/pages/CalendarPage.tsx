@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useStore } from '../store'
 import type { Calendar, CalendarEvent, EventType } from '../types'
+import { applyScheduleRules, SCHEDULE_RULES_DESCRIPTION } from '../lib/schedule-rules'
+import { Octokit } from '@octokit/rest'
 
 const MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь']
 const DAYS_RU = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс']
@@ -14,6 +16,35 @@ const EVENT_TYPES: { type: EventType; label: string; color: string }[] = [
 
 function typeColor(type: EventType) {
   return EVENT_TYPES.find(t => t.type === type)?.color ?? '#9B98B8'
+}
+
+function eventIcon(label: string, type: EventType): string {
+  const l = label.toLowerCase()
+  if (l.includes('💕') || l.includes('девушк')) return '💕'
+  if (l.includes('врач') || l.includes('больниц') || l.includes('аптек')) return '🏥'
+  if (l.includes('тренировк') || l.includes('спортзал') || l.includes('gym')) return '💪'
+  if (l.includes('магазин') || l.includes('покупк')) return '🛒'
+  if (l.includes('кино') || l.includes('фильм')) return '🎬'
+  if (l.includes('встреч') || l.includes('друг')) return '🤝'
+  if (l.includes('день рождени') || l.includes('праздник')) return '🎉'
+  if (l.includes('дорог') || l.includes('поезд') || l.includes('автобус')) return '🚌'
+  if (type === 'work') return '💼'
+  if (type === 'free') return '⏰'
+  if (type === 'personal') return '👤'
+  return '📌'
+}
+
+function shiftIcon(label: string): string {
+  const l = label.toLowerCase()
+  if (l.includes('ночн')) return '🌙'
+  if (l.includes('ранн')) return '🌅'
+  if (l.includes('дневн')) return '☀️'
+  return '💼'
+}
+
+function freeWindowIcon(label: string): string {
+  if (label.startsWith('🖥') || label.startsWith('😴') || label.startsWith('🌅') || label.startsWith('✅') || label.startsWith('🕐')) return ''
+  return '⏰'
 }
 
 function getMonthDays(year: number, month: number): (Date | null)[] {
@@ -332,7 +363,31 @@ export function CalendarPage() {
 
   const handleImportMarch = async () => {
     setSaving(true)
-    await setCalendar({ ...MARCH_2026_CALENDAR, events: calendar.events ?? [] })
+    // Генерируем события по личным правилам
+    const ruleEvents = applyScheduleRules(MARCH_2026_CALENDAR.workSchedule)
+    // Оставляем ручные события, добавляем сгенерированные
+    const manualEvents = (calendar.events ?? []).filter(e => !e.id.startsWith('gf-'))
+    const newCalendar = { ...MARCH_2026_CALENDAR, events: [...manualEvents, ...ruleEvents] }
+    await setCalendar(newCalendar)
+    // Сохраняем правила в ctrl-data для документации
+    if (config) {
+      try {
+        const octokit = new Octokit({ auth: config.token })
+        const path = 'data/schedule-rules.json'
+        const json = JSON.stringify(SCHEDULE_RULES_DESCRIPTION, null, 2)
+        const encoded = btoa(new TextEncoder().encode(json).reduce((s, b) => s + String.fromCharCode(b), ''))
+        let sha: string | undefined
+        try {
+          const res = await octokit.repos.getContent({ owner: config.owner, repo: config.repo, path })
+          sha = (res.data as { sha: string }).sha
+        } catch { /* file doesn't exist yet */ }
+        await octokit.repos.createOrUpdateFileContents({
+          owner: config.owner, repo: config.repo, path,
+          message: 'ctrl: update schedule rules',
+          content: encoded, sha,
+        })
+      } catch { /* не критично */ }
+    }
     setSaving(false)
     setImporting(false)
   }
@@ -478,61 +533,95 @@ export function CalendarPage() {
         </div>
 
         {/* Free window */}
-        {selectedFree.map((fw, i) => (
-          <div key={i} className="flex items-center gap-3 py-2 px-3 rounded-xl mb-2" style={{ backgroundColor: '#7C3AED18', border: '1px solid #7C3AED33' }}>
-            <div className="w-1.5 h-6 rounded-full flex-shrink-0" style={{ backgroundColor: '#7C3AED' }} />
-            <div className="flex-1">
-              <p className="text-sm font-medium" style={{ color: '#F0EEFF' }}>{fw.label}</p>
-              <p className="text-xs" style={{ color: '#9B98B8' }}>{fw.startTime} — {fw.endTime}</p>
+        {selectedFree.map((fw, i) => {
+          const prefix = freeWindowIcon(fw.label)
+          const displayLabel = prefix ? fw.label : fw.label
+          return (
+            <div key={i} className="flex items-center gap-3 py-3 px-4 rounded-2xl mb-2" style={{ backgroundColor: '#7C3AED18', border: '1px solid #7C3AED22' }}>
+              <div
+                className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-base"
+                style={{ backgroundColor: '#7C3AED22' }}
+              >
+                {displayLabel.match(/^\p{Emoji}/u)?.[0] ?? '⏰'}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold leading-tight" style={{ color: '#F0EEFF' }}>
+                  {displayLabel.replace(/^\p{Emoji}\s*/u, '')}
+                </p>
+                <p className="text-xs mt-0.5" style={{ color: '#9B98B8' }}>{fw.startTime} — {fw.endTime}</p>
+              </div>
+              <p className="text-sm font-bold flex-shrink-0" style={{ color: '#A78BFA' }}>
+                {fmtH(fw.freeMinutes)}
+              </p>
             </div>
-            <p className="text-sm font-bold flex-shrink-0" style={{ color: '#7C3AED' }}>
-              {fmtH(fw.freeMinutes)}
-            </p>
-          </div>
-        ))}
+          )
+        })}
 
         {/* Work */}
         {selectedWork.map((e, i) => (
-          <div key={i} className="flex items-center gap-3 py-2 px-3 rounded-xl mb-2" style={{ backgroundColor: '#EF444411' }}>
-            <div className="w-1.5 h-6 rounded-full flex-shrink-0" style={{ backgroundColor: '#EF4444' }} />
-            <div className="flex-1">
-              <p className="text-sm font-medium" style={{ color: '#F0EEFF' }}>{e.label}</p>
-              <p className="text-xs" style={{ color: '#9B98B8' }}>{e.startTime} — {e.endTime}</p>
+          <div key={i} className="flex items-center gap-3 py-3 px-4 rounded-2xl mb-2" style={{ backgroundColor: '#EF444411', border: '1px solid #EF444422' }}>
+            <div
+              className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-base"
+              style={{ backgroundColor: '#EF444422' }}
+            >
+              {shiftIcon(e.label)}
             </div>
-            <p className="text-xs flex-shrink-0" style={{ color: '#EF444488' }}>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold leading-tight" style={{ color: '#F0EEFF' }}>{e.label}</p>
+              <p className="text-xs mt-0.5" style={{ color: '#9B98B8' }}>{e.startTime} — {e.endTime}</p>
+            </div>
+            <p className="text-xs font-semibold flex-shrink-0" style={{ color: '#EF444488' }}>
               {fmtH(diffMinutes(e.startTime, e.endTime))}
             </p>
           </div>
         ))}
 
         {/* Custom events */}
-        {selectedEvents.map(ev => (
-          <div key={ev.id} className="flex items-center gap-3 py-2 px-3 rounded-xl mb-2" style={{ backgroundColor: `${typeColor(ev.type)}18` }}>
-            <div className="w-1.5 h-6 rounded-full flex-shrink-0" style={{ backgroundColor: typeColor(ev.type) }} />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate" style={{ color: '#F0EEFF' }}>{ev.label}</p>
-              <p className="text-xs" style={{ color: '#9B98B8' }}>{ev.startTime} — {ev.endTime}</p>
+        {selectedEvents.map(ev => {
+          const color = typeColor(ev.type)
+          const icon = eventIcon(ev.label, ev.type)
+          const isGf = ev.id.startsWith('gf-')
+          return (
+            <div key={ev.id} className="flex items-center gap-3 py-3 px-4 rounded-2xl mb-2"
+              style={{ backgroundColor: `${color}15`, border: `1px solid ${color}25` }}>
+              <div
+                className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-base"
+                style={{ backgroundColor: `${color}22` }}
+              >
+                {icon}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold leading-tight truncate" style={{ color: '#F0EEFF' }}>
+                  {ev.label.replace(/^💕\s*/, '')}
+                </p>
+                <p className="text-xs mt-0.5" style={{ color: '#9B98B8' }}>{ev.startTime} — {ev.endTime}</p>
+              </div>
+              {!isGf && (
+                <button
+                  onClick={() => deleteEvent(ev.id)}
+                  className="w-7 h-7 rounded-lg flex items-center justify-center text-sm flex-shrink-0"
+                  style={{ color: '#9B98B866', backgroundColor: 'rgba(255,255,255,0.04)' }}
+                >
+                  ×
+                </button>
+              )}
             </div>
-            <button
-              onClick={() => deleteEvent(ev.id)}
-              className="w-6 h-6 rounded-lg flex items-center justify-center text-xs flex-shrink-0"
-              style={{ color: '#9B98B866', backgroundColor: 'transparent' }}
-            >
-              ×
-            </button>
-          </div>
-        ))}
+          )
+        })}
 
         {/* Planned slots */}
         {selectedSlots.map((slot, i) => {
           const project = projects.find(p => p.id === slot.projectId)
           const task = project?.goals.flatMap(g => g.tasks).find(t => t.id === slot.taskId)
+          const color = project?.color ?? '#3B82F6'
           return (
-            <div key={i} className="flex items-center gap-3 py-2 px-3 rounded-xl mb-2" style={{ backgroundColor: '#3B82F611' }}>
-              <div className="w-1.5 h-6 rounded-full flex-shrink-0" style={{ backgroundColor: project?.color ?? '#3B82F6' }} />
+            <div key={i} className="flex items-center gap-3 py-3 px-4 rounded-2xl mb-2" style={{ backgroundColor: `${color}15`, border: `1px solid ${color}25` }}>
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-base" style={{ backgroundColor: `${color}22` }}>
+                📋
+              </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate" style={{ color: '#F0EEFF' }}>{task?.title ?? 'Задача'}</p>
-                <p className="text-xs" style={{ color: '#9B98B8' }}>{slot.startTime} · {slot.durationMinutes}мин · {project?.name}</p>
+                <p className="text-sm font-semibold leading-tight truncate" style={{ color: '#F0EEFF' }}>{task?.title ?? 'Задача'}</p>
+                <p className="text-xs mt-0.5" style={{ color: '#9B98B8' }}>{slot.startTime} · {slot.durationMinutes}мин · {project?.name}</p>
               </div>
             </div>
           )
@@ -541,12 +630,15 @@ export function CalendarPage() {
         {/* Sessions */}
         {selectedSessions.map((s, i) => {
           const project = projects.find(p => p.id === s.projectId)
+          const color = project?.color ?? '#10B981'
           return (
-            <div key={i} className="flex items-center gap-3 py-2 px-3 rounded-xl mb-2" style={{ backgroundColor: '#10B98111' }}>
-              <div className="w-1.5 h-6 rounded-full flex-shrink-0" style={{ backgroundColor: project?.color ?? '#10B981' }} />
-              <div>
-                <p className="text-sm font-medium" style={{ color: '#F0EEFF' }}>{project?.name ?? 'Проект'}</p>
-                <p className="text-xs" style={{ color: '#9B98B8' }}>{s.durationMinutes}мин · {s.xpEarned} XP</p>
+            <div key={i} className="flex items-center gap-3 py-3 px-4 rounded-2xl mb-2" style={{ backgroundColor: '#10B98111', border: '1px solid #10B98122' }}>
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-base" style={{ backgroundColor: `${color}22` }}>
+                ⚡
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold leading-tight" style={{ color: '#F0EEFF' }}>{project?.name ?? 'Проект'}</p>
+                <p className="text-xs mt-0.5" style={{ color: '#9B98B8' }}>{s.durationMinutes}мин · {s.xpEarned} XP</p>
               </div>
             </div>
           )
