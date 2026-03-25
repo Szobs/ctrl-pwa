@@ -20,6 +20,7 @@ function typeColor(type: EventType) {
 
 function eventIcon(label: string, type: EventType): string {
   const l = label.toLowerCase()
+  if (l.includes('😴') || l.includes('сон')) return '😴'
   if (l.includes('💕') || l.includes('девушк')) return '💕'
   if (l.includes('врач') || l.includes('больниц') || l.includes('аптек')) return '🏥'
   if (l.includes('тренировк') || l.includes('спортзал') || l.includes('gym')) return '💪'
@@ -57,7 +58,12 @@ function getMonthDays(year: number, month: number): (Date | null)[] {
   return days
 }
 
-function toDateStr(d: Date) { return d.toISOString().split('T')[0] }
+function toDateStr(d: Date) {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
 
 /** Минуты между двумя HH:MM строками (учитывает переход через полночь) */
 function diffMinutes(start: string, end: string): number {
@@ -299,10 +305,10 @@ const MARCH_2026_CALENDAR: Calendar = {
   freeWindows: [
     { date: '2026-03-02', startTime: '22:00', endTime: '00:30', freeMinutes: 150,  label: '🖥 ПК (после девушки)' },
     { date: '2026-03-03', startTime: '09:00', endTime: '21:00', freeMinutes: 720,  label: '🕐 До ночной смены' },
-    { date: '2026-03-04', startTime: '13:00', endTime: '21:30', freeMinutes: 510,  label: '😴 После ночной (сон до 13)' },
-    { date: '2026-03-05', startTime: '13:00', endTime: '22:00', freeMinutes: 540,  label: '😴 Отдых (после ночной)' },
+    { date: '2026-03-04', startTime: '13:00', endTime: '21:30', freeMinutes: 510,  label: '⏰ Свободное время' },
+    { date: '2026-03-05', startTime: '13:00', endTime: '22:00', freeMinutes: 540,  label: '⏰ Свободное время' },
     { date: '2026-03-06', startTime: '09:00', endTime: '21:00', freeMinutes: 720,  label: '🕐 До ночной смены' },
-    { date: '2026-03-07', startTime: '13:00', endTime: '22:00', freeMinutes: 540,  label: '😴 Отдых (после ночной)' },
+    { date: '2026-03-07', startTime: '13:00', endTime: '22:00', freeMinutes: 540,  label: '⏰ Свободное время' },
     { date: '2026-03-08', startTime: '10:00', endTime: '22:00', freeMinutes: 720,  label: '✅ Выходной' },
     { date: '2026-03-09', startTime: '22:00', endTime: '00:30', freeMinutes: 150,  label: '🖥 ПК (после девушки)' },
     { date: '2026-03-10', startTime: '10:00', endTime: '22:00', freeMinutes: 720,  label: '✅ Выходной' },
@@ -319,7 +325,7 @@ const MARCH_2026_CALENDAR: Calendar = {
     { date: '2026-03-21', startTime: '10:00', endTime: '22:00', freeMinutes: 720,  label: '✅ Выходной' },
     { date: '2026-03-22', startTime: '10:00', endTime: '22:00', freeMinutes: 720,  label: '✅ Выходной' },
     { date: '2026-03-24', startTime: '09:00', endTime: '21:00', freeMinutes: 720,  label: '🕐 До ночной смены' },
-    { date: '2026-03-25', startTime: '13:00', endTime: '22:00', freeMinutes: 540,  label: '😴 После ночной (сон до 13)' },
+    { date: '2026-03-25', startTime: '13:00', endTime: '22:00', freeMinutes: 540,  label: '⏰ Свободное время' },
     { date: '2026-03-26', startTime: '22:00', endTime: '00:30', freeMinutes: 150,  label: '🖥 ПК (после девушки)' },
     { date: '2026-03-27', startTime: '22:00', endTime: '00:30', freeMinutes: 150,  label: '🖥 ПК (после девушки)' },
     { date: '2026-03-28', startTime: '08:00', endTime: '13:30', freeMinutes: 330,  label: '🌅 До дневной смены' },
