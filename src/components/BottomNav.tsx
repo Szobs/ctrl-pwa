@@ -5,6 +5,7 @@ const TABS = [
   { path: '/calendar', icon: '📅', label: 'Календарь' },
   { path: '/history', icon: '📊', label: 'История' },
   { path: '/report', icon: '📋', label: 'Отчёт' },
+  { path: '/settings', icon: '⚙️', label: 'Настройки' },
 ]
 
 export function BottomNav() {

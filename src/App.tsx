@@ -7,6 +7,7 @@ import { NewProject } from './pages/NewProject'
 import { CalendarPage } from './pages/CalendarPage'
 import { HistoryPage } from './pages/HistoryPage'
 import { ReportPage } from './pages/ReportPage'
+import { SettingsPage } from './pages/SettingsPage'
 import { SessionTimer } from './components/SessionTimer'
 import { BottomNav } from './components/BottomNav'
 
@@ -31,6 +32,7 @@ function AppRoutes() {
             <Route path="/calendar" element={<CalendarPage />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/report" element={<ReportPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </>
         )}
