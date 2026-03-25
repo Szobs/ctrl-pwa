@@ -103,14 +103,31 @@ export function MainScreen() {
         </div>
       </div>
 
-      {/* Weekly stats */}
-      <div className="px-2 mb-4">
+      {/* Weekly stats + Streak side by side */}
+      <div className="px-2 mb-4 grid grid-cols-2 gap-2">
+        {/* Weekly chart */}
         <div className="rounded-2xl p-3" style={{ backgroundColor: '#252236' }}>
-          <div className="flex justify-between items-center mb-3">
-            <span className="text-sm font-semibold" style={{ color: '#F0EEFF' }}>Эта неделя</span>
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-xs font-semibold" style={{ color: '#9B98B8' }}>Неделя</span>
             <span className="text-sm font-bold" style={{ color: '#10B981' }}>{weeklyHours}ч</span>
           </div>
           <WeeklyChart minutes={streak.weeklyMinutes} />
+        </div>
+        {/* Streak */}
+        <div className="rounded-2xl p-3 flex flex-col justify-between" style={{ backgroundColor: '#252236' }}>
+          <span className="text-xs font-semibold" style={{ color: '#9B98B8' }}>Серия</span>
+          <div className="flex items-end gap-1 mt-1">
+            <span className="text-3xl font-black leading-none" style={{ color: '#F0EEFF' }}>{streak.currentStreak}</span>
+            <span className="text-sm mb-0.5" style={{ color: '#9B98B8' }}>дн</span>
+          </div>
+          <div className="mt-2">
+            <p className="text-xs" style={{ color: '#F97316' }}>
+              🔥 рекорд {streak.maxStreak}д
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: '#9B98B866' }}>
+              {streak.lastActiveDate === new Date().toISOString().split('T')[0] ? '✓ сегодня активен' : 'сегодня не работал'}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -176,7 +193,7 @@ export function MainScreen() {
             <p className="text-sm" style={{ color: '#9B98B8' }}>Нет проектов. Добавь первый!</p>
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-2 gap-2">
             {projects.map(p => <ProjectCard key={p.id} project={p} />)}
           </div>
         )}
