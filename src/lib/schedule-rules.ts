@@ -93,7 +93,7 @@ export function applyScheduleRules(workSchedule: WorkShift[]): CalendarEvent[] {
       id: `gf-night-${shift.date}`,
       date: nextDay,
       startTime: '16:30',
-      endTime: isSat ? '23:59' : '23:00',
+      endTime: isSat ? '23:59' : '21:30',
       label: isSat ? '💕 У девушки (ночевать)' : '💕 У девушки',
       type: 'personal',
     })
@@ -110,7 +110,7 @@ export function applyScheduleRules(workSchedule: WorkShift[]): CalendarEvent[] {
       id: `gf-morning-${shift.date}`,
       date: shift.date,
       startTime: isSat ? '15:30' : '16:30',
-      endTime: '23:59',
+      endTime: isSat ? '23:59' : '21:30',
       label: isSat ? '💕 У девушки (ночевать)' : '💕 У девушки',
       type: 'personal',
     })
