@@ -90,31 +90,7 @@ export function MainScreen() {
       {isDesktop && <div
         style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, padding: '32px 0 96px', alignItems: 'start' }}
       >
-        {/* ── ЛЕВАЯ: Проекты ── */}
-        <div>
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="text-lg font-bold" style={{ color: '#F0EEFF' }}>Проекты</h2>
-            <button
-              onClick={() => navigate('/new-project')}
-              className="text-sm px-3 py-1.5 rounded-xl transition-all active:scale-95"
-              style={{ backgroundColor: '#7C3AED22', color: '#7C3AED' }}
-            >
-              + Добавить
-            </button>
-          </div>
-          {projects.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-4xl mb-3">🚀</p>
-              <p className="text-sm" style={{ color: '#9B98B8' }}>Нет проектов</p>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-3">
-              {projects.map(p => <ProjectCard key={p.id} project={p} />)}
-            </div>
-          )}
-        </div>
-
-        {/* ── ЦЕНТР: Шапка + статы + мотивация ── */}
+        {/* ── ЛЕВАЯ: Шапка + статы + мотивация ── */}
         <div>
           {/* Header */}
           <div className="mb-4">
@@ -130,6 +106,15 @@ export function MainScreen() {
                   Синхронизация...
                 </span>
               )}
+            </div>
+
+            {/* Мотивация — под названием */}
+            <div
+              className="rounded-2xl p-4 mb-3"
+              style={{ background: 'linear-gradient(135deg, #7C3AED18, #A855F711)', border: '1px solid #7C3AED33' }}
+            >
+              <p className="text-xs font-semibold mb-2" style={{ color: '#7C3AED' }}>Мысль дня</p>
+              <p className="text-sm leading-relaxed" style={{ color: '#C4B5FD' }}>{getDailyQuote()}</p>
             </div>
 
             {/* XP */}
@@ -198,15 +183,6 @@ export function MainScreen() {
             </div>
           )}
 
-          {/* Мотивация */}
-          <div
-            className="rounded-2xl p-4 mb-4"
-            style={{ background: 'linear-gradient(135deg, #7C3AED18, #A855F711)', border: '1px solid #7C3AED33' }}
-          >
-            <p className="text-xs font-semibold mb-2" style={{ color: '#7C3AED' }}>Мысль дня</p>
-            <p className="text-sm leading-relaxed" style={{ color: '#C4B5FD' }}>{getDailyQuote()}</p>
-          </div>
-
           {/* Reset */}
           {!confirmReset ? (
             <button
@@ -226,6 +202,17 @@ export function MainScreen() {
               </div>
             </div>
           )}
+        </div>
+
+        {/* ── ЦЕНТР: Проекты ── */}
+        <div>
+          <div className="flex justify-between items-center mb-3">
+            <h2 className="text-lg font-bold" style={{ color: '#F0EEFF' }}>Проекты</h2>
+            <button onClick={() => navigate('/new-project')} className="text-sm px-3 py-1 rounded-xl" style={{ backgroundColor: '#7C3AED22', color: '#7C3AED' }}>+ Добавить</button>
+          </div>
+          <div className="flex flex-col gap-2">
+            {projects.map(p => <ProjectCard key={p.id} project={p} />)}
+          </div>
         </div>
 
         {/* ── ПРАВАЯ: Серии ── */}
