@@ -156,26 +156,6 @@ export function MainScreen() {
         </div>
       )}
 
-      {/* Start Work Button */}
-      {next && (
-        <div className="px-4 mb-4">
-          <div className="rounded-2xl overflow-hidden" style={{ boxShadow: `0 4px 20px ${next.project.color}44` }}>
-            <div className="px-4 pt-2 pb-1 flex items-center gap-2" style={{ backgroundColor: `${next.project.color}22` }}>
-              {next.project.icon && <span className="text-sm">{next.project.icon}</span>}
-              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: next.project.color }} />
-              <span className="text-xs font-semibold" style={{ color: next.project.color }}>{next.project.name}</span>
-            </div>
-            <button
-              onClick={() => startSession(next.project.id, next.task.id)}
-              className="w-full px-4 py-3 font-bold text-base transition-all active:scale-98 text-left"
-              style={{ background: `linear-gradient(135deg, ${next.project.color}, ${next.project.color}BB)`, color: '#fff' }}
-            >
-              ▶ Начать работу
-              <p className="text-xs font-normal mt-0.5 opacity-80 truncate">{next.task.title}</p>
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Projects */}
       <div className="px-4">
