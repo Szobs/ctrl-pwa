@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store'
 import { ProjectCard } from '../components/ProjectCard'
@@ -58,6 +58,13 @@ export function MainScreen() {
   const navigate = useNavigate()
   const { projects, streak, syncing, syncData, resetAll } = useStore()
   const [confirmReset, setConfirmReset] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(() => window.innerWidth >= 1024)
+
+  useEffect(() => {
+    const handler = () => setIsDesktop(window.innerWidth >= 1024)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
 
   useEffect(() => { syncData() }, [])
 
@@ -80,9 +87,8 @@ export function MainScreen() {
     <div className="min-h-svh pb-24" style={{ backgroundColor: '#1E1B2E' }}>
 
       {/* ── DESKTOP: 3 колонки на всю ширину ── */}
-      <div
-        className="hidden lg:grid h-full"
-        style={{ gridTemplateColumns: '1fr 1fr 1fr', gap: 16, padding: '32px 24px 96px' }}
+      {isDesktop && <div
+        style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, padding: '32px 24px 96px', alignItems: 'start' }}
       >
         {/* ── ЛЕВАЯ: Проекты ── */}
         <div>
@@ -296,10 +302,10 @@ export function MainScreen() {
             })}
           </div>
         </div>
-      </div>
+      </div>}
 
       {/* ── МОБИЛЬНЫЙ: вертикальный стак ── */}
-      <div className="lg:hidden">
+      {!isDesktop && <div>
         <div className="px-3 pt-12 pb-3">
           <div className="flex justify-between items-start">
             <div>
@@ -395,7 +401,7 @@ export function MainScreen() {
             </div>
           )}
         </div>
-      </div>
+      </div>}
 
     </div>
   )
